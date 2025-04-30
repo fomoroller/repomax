@@ -1,0 +1,22 @@
+{
+    "configurations": [
+        {
+            "type": "swift-lldb",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:repomax}",
+            "name": "Debug repomax",
+            "program": "${workspaceFolder:repomax}/.build/debug/repomax",
+            "preLaunchTask": "swift: Build Debug repomax"
+        },
+        {
+            "type": "swift-lldb",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:repomax}",
+            "name": "Release repomax",
+            "program": "${workspaceFolder:repomax}/.build/release/repomax",
+            "preLaunchTask": "swift: Build Release repomax"
+        }
+    ]
+}
