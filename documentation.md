@@ -1,23 +1,17 @@
 # Project Documentation
 
-This document provides an overview of the files and their functionalities in the Repomax application codebase.
+imThis document provides an overview of the files and their functionalities in the Repomax application codebase, located within the `/repomax/repomax/` directory, which follows a standard Xcode project structure.
 
-**Note:** There appear to be two potential locations for the application's source code within this workspace:
-1.  `/Sources/repomax/`: This follows the Swift Package Manager (SPM) structure, likely defined in `Package.swift`.
-2.  `/repomax/repomax/`: This follows a standard Xcode project structure and includes additional Xcode-specific files.
+## File Breakdown
 
-It's important to identify which set of files is actively used for development. This documentation primarily describes the files found, noting differences where apparent. The files listed under `/repomax/repomax/` seem to represent the more complete Xcode project setup.
-
-## File Breakdown (Common & Xcode Project Files)
-
-### `repomaxApp.swift` (Found in both `Sources/repomax` and `repomax/repomax`)
+### `repomaxApp.swift`
 - This is the main entry point of the application.
 - Sets up the main `WindowGroup` and the initial `ContentView`.
 - Manages the application's lifecycle and main window behavior.
 - Initializes and provides the `AppState` object to the environment.
 - Defines basic application commands, such as "New Project".
 
-### `ContentView.swift` (Found in both `Sources/repomax` and `repomax/repomax`)
+### `ContentView.swift`
 - Defines the main user interface layout of the application using a horizontal split view.
 - Contains the `SidebarView` (left pane) and the main content area (right pane).
 - Switches the main content area between `ApplyView` and `ComposeView` based on the selected tab managed by `AppState`.
@@ -35,27 +29,27 @@ It's important to identify which set of files is actively used for development. 
     - `SelectedFile`: A data structure representing a file selected for analysis, including path, name, size (tokens), and percentage of total tokens.
     - `FileItemView`: Displays a selected file within the Compose view, showing its name, token size, and a percentage indicator.
 
-### `FileTreeOptionsView.swift` (Found in both `Sources/repomax` and `repomax/repomax`)
+### `FileTreeOptionsView.swift`
 - Defines a view presented as a sheet for configuring options related to the file tree and code map.
 - Allows users to select the file display mode (Auto, Files, Selected).
 - Includes an option to include root directories when files are selected.
 - Provides settings for Code Map usage (Auto, Always, Never).
 - Contains a custom `CheckboxToggleStyle`.
 
-### `IgnorePatternsView.swift` (Found in both `Sources/repomax` and `repomax/repomax`)
+### `IgnorePatternsView.swift`
 - Defines a view for managing file ignore patterns.
 - Allows editing of patterns for "Local Folder" (intended for `.repo_ignore`) or "Global Default" scopes.
 - Explains how local and global patterns are combined and how local patterns override global ones.
 - Provides a text editor for inputting ignore patterns.
 - Includes buttons to Cancel or Save the changes, which updates the `AppState` and `UserDefaults`.
 
-### `Persistence.swift` (Found in both `Sources/repomax` and `repomax/repomax`)
+### `Persistence.swift`
 - Sets up and manages the Core Data stack for the application.
 - Handles the creation and loading of the `NSPersistentContainer`.
 - Includes configurations for both persistent storage and in-memory storage (for previews/testing).
 - Sets up automatic merging of changes from the parent context.
 
-### `MergeModalView.swift` (Found in both `Sources/repomax` and `repomax/repomax`)
+### `MergeModalView.swift`
 - Defines a modal view displayed when reviewing pending code changes before applying them.
 - Presents a list of files with proposed changes (Create, Modified, Deleted).
 - Allows the user to select which individual file changes to apply using checkboxes.
@@ -65,7 +59,7 @@ It's important to identify which set of files is actively used for development. 
     - `CodeView`: A helper view for displaying code content in a scrollable, monospaced text view.
     - `MergeFileChange`: A data structure representing a pending file change with details like file name, path, type of change, and new content.
 
-### `AppState.swift` (Found in both `Sources/repomax` and `repomax/repomax`)
+### `AppState.swift`
 - A central `ObservableObject` class managing the application's state.
 - Holds published properties for various UI states, data models, and settings (e.g., selected tab, file tree, selected files, search text, AI response, current role, clipboard settings, etc.).
 - Contains logic for:
@@ -92,45 +86,45 @@ It's important to identify which set of files is actively used for development. 
     - `ClipboardSettings`: Holds boolean flags for which components to include when copying to the clipboard (instructions, files, code map).
     - `FileChange`: Represents a pending change to a file, including file path, original content, new content, change type, and applied status.
 
-### `RolePromptSelectorView.swift` (Found in both `Sources/repomax` and `repomax/repomax`)
+### `RolePromptSelectorView.swift`
 - Defines a modal view for selecting or adding AI role prompts.
 - Lists built-in roles (Architect, Engineer) and allows selecting them.
 - Displays existing custom prompts and allows selecting them.
 - Provides an interface to add new custom prompts with a name and content.
 
-### `GitignoreParser.swift` (Found in both `Sources/repomax` and `repomax/repomax`)
+### `GitignoreParser.swift`
 - A simple struct for parsing `.gitignore` content.
 - Extracts ignore patterns from a given string, filtering out comments and empty lines.
 - Provides an `isIgnored` method for basic checking if a file path contains any of the parsed patterns.
 
-### `ClipboardSettingsView.swift` (Found in both `Sources/repomax` and `repomax/repomax`)
+### `ClipboardSettingsView.swift`
 - Defines a view for configuring which components are included when copying content to the clipboard.
 - Includes toggles for including instructions, selected files, and the code map.
 - Provides a "Copy Now" button to trigger the copy action with the current settings.
 - Contains a `ClipboardCheckboxToggleStyle` struct (similar to one in `FileTreeOptionsView.swift`).
 
-### `repomax.entitlements` (Found in `repomax/repomax`)
+### `repomax.entitlements`
 - Property list file configuring application capabilities and security settings.
 - Enables the App Sandbox (`com.apple.security.app-sandbox`).
 - Requests permission for read-only access to user-selected files (`com.apple.security.files.user-selected.read-only`).
 
-### `repomax.xcdatamodeld/` (Found in `repomax/repomax`)
+### `repomax.xcdatamodeld/`
 - A directory representing the Core Data model definition.
 - Contains the schema, entities, attributes, and relationships used for data persistence managed by `Persistence.swift`.
 
-### `Preview Content/` (Found in `repomax/repomax`)
+### `Preview Content/`
 - A directory holding assets used specifically for SwiftUI previews within Xcode.
 - Allows developers to provide sample data or resources to make previews more representative without affecting the main application bundle.
 
-### `Assets.xcassets/` (Found in `repomax/repomax`)
+### `Assets.xcassets/`
 - The standard Xcode asset catalog directory.
 - Manages application resources like the app icon, images, custom colors, and potentially other data assets used throughout the UI.
 
-## SPM-Specific Files
-
-### `repomax.swift` (Found only in `Sources/repomax`)
-- A very minimal file (previously 3 lines). Its exact purpose in the SPM context is unclear without further inspection, but it doesn't appear central to the application logic documented elsewhere. It might be a placeholder or related to the SPM target definition.
+### `repomax.swift`
+- A very minimal file, originally found in the SPM structure but now part of the Xcode project.
+- Its content is minimal and doesn't appear to contain significant application logic or UI. Its exact purpose might require further investigation if specific build or runtime issues arise.
 
 ### `Package.swift` (Found in workspace root)
 - The manifest file for the Swift Package Manager.
-- Defines the package structure, targets (like the `repomax` source directory), dependencies, and build configurations for the SPM part of the project. 
+- Defines the overall package structure and potentially dependencies for other packages or test targets.
+- **Note:** The primary application target previously defined here has been removed, as the application is now built via the Xcode project. 
