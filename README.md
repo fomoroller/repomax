@@ -49,6 +49,18 @@ Uses Core Data for managing application data like recent workspaces and custom r
 
 ---
 
+## 📸 Screenshots
+
+<div align="center">
+
+![Repomax Screenshot](screenshot-1.png)
+
+*Repomax in action - managing code files and AI interactions*
+
+</div>
+
+---
+
 ## 📁 Directory Structure
 
 ```
