@@ -19,6 +19,7 @@ xcuserdata/
 *.moved-aside
 *.xcuserstate
 *.xcscmblueprint
+.swiftpm
 
 # Swift Package Manager
 /.build
