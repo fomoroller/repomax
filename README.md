@@ -1,4 +1,10 @@
-# 🗂️ Repomax
+<div align="center">
+
+<img src="repomax/Resources/Assets.xcassets/AppIcon.appiconset/icon_32.png" alt="Repomax App Icon" width="32" height="32" />
+
+# Repomax
+
+</div>
 
 **Repomax** is a powerful macOS application designed to assist developers with AI-powered code understanding, generation, and modification. It provides an intuitive suite of tools to manage codebases, interact with AI models using configurable roles, and apply changes with a comprehensive review process.
 
