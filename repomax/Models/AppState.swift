@@ -5,7 +5,7 @@ import AppKit
 @available(macOS 10.15, *)
 @MainActor
 class AppState: ObservableObject {
-    @Published var selectedTab: TabType = .apply
+    @Published var selectedTab: TabType = .compose
     @Published var fileTree: [FileItem] = []
     @Published var selectedFiles: Set<String> = []
     @Published var searchText: String = ""
@@ -252,7 +252,7 @@ class AppState: ObservableObject {
         var gitignoreParser: GitignoreParser? = nil
         
         if FileManager.default.fileExists(atPath: gitignoreURL.path) {
-            if let content = try? String(contentsOf: gitignoreURL) {
+            if let content = try? String(contentsOf: gitignoreURL, encoding: .utf8) {
                 gitignoreParser = GitignoreParser(gitignoreContent: content)
             }
         }
@@ -445,7 +445,6 @@ class AppState: ObservableObject {
     
     func copyFormattedContentToClipboard() {
         var textToCopy = ""
-        var filesWereAdded = false
         
         // Follow the recommended order from prompts.md:
         // 1. File Map Block
@@ -474,7 +473,6 @@ class AppState: ObservableObject {
         
         // 2. Add file contents if enabled
         if clipboardSettings.includeFiles && !selectedFiles.isEmpty {
-            filesWereAdded = true
             textToCopy += "<file_contents>\n"
             
             // Sort files for consistent output
@@ -671,7 +669,7 @@ class AppState: ObservableObject {
                     
                     if FileManager.default.fileExists(atPath: path) {
                         changeType = action.lowercased() == "modify" ? .modify : .rewrite
-                        originalContent = (try? String(contentsOfFile: path)) ?? ""
+                        originalContent = (try? String(contentsOfFile: path, encoding: .utf8)) ?? ""
                         
                         // If the file exists, back it up
                         backupContents[path] = originalContent
@@ -725,7 +723,7 @@ class AppState: ObservableObject {
                     
                     if FileManager.default.fileExists(atPath: path) {
                         changeType = .modify
-                        originalContent = (try? String(contentsOfFile: path)) ?? ""
+                        originalContent = (try? String(contentsOfFile: path, encoding: .utf8)) ?? ""
                         
                         // If the file exists, back it up
                         backupContents[path] = originalContent

@@ -1,0 +1,546 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXContainerItemProxy section */
+		AF4D8B842DE0990300937071 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AF4D8B652DE0990200937071 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AF4D8B6C2DE0990200937071;
+			remoteInfo = repomax;
+		};
+		AF4D8B8E2DE0990300937071 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AF4D8B652DE0990200937071 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AF4D8B6C2DE0990200937071;
+			remoteInfo = repomax;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		AF4D8B6D2DE0990200937071 /* repomax.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = repomax.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AF4D8B832DE0990300937071 /* repomaxTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = repomaxTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		AF4D8B8D2DE0990300937071 /* repomaxUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = repomaxUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		AF4D8B6F2DE0990200937071 /* repomax */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = repomax;
+			sourceTree = "<group>";
+		};
+		AF4D8B862DE0990300937071 /* repomaxTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = repomaxTests;
+			sourceTree = "<group>";
+		};
+		AF4D8B902DE0990300937071 /* repomaxUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = repomaxUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		AF4D8B6A2DE0990200937071 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AF4D8B802DE0990300937071 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AF4D8B8A2DE0990300937071 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		AF4D8B642DE0990200937071 = {
+			isa = PBXGroup;
+			children = (
+				AF4D8B6F2DE0990200937071 /* repomax */,
+				AF4D8B862DE0990300937071 /* repomaxTests */,
+				AF4D8B902DE0990300937071 /* repomaxUITests */,
+				AF4D8B6E2DE0990200937071 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		AF4D8B6E2DE0990200937071 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				AF4D8B6D2DE0990200937071 /* repomax.app */,
+				AF4D8B832DE0990300937071 /* repomaxTests.xctest */,
+				AF4D8B8D2DE0990300937071 /* repomaxUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		AF4D8B6C2DE0990200937071 /* repomax */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AF4D8B972DE0990300937071 /* Build configuration list for PBXNativeTarget "repomax" */;
+			buildPhases = (
+				AF4D8B692DE0990200937071 /* Sources */,
+				AF4D8B6A2DE0990200937071 /* Frameworks */,
+				AF4D8B6B2DE0990200937071 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				AF4D8B6F2DE0990200937071 /* repomax */,
+			);
+			name = repomax;
+			packageProductDependencies = (
+			);
+			productName = repomax;
+			productReference = AF4D8B6D2DE0990200937071 /* repomax.app */;
+			productType = "com.apple.product-type.application";
+		};
+		AF4D8B822DE0990300937071 /* repomaxTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AF4D8B9A2DE0990300937071 /* Build configuration list for PBXNativeTarget "repomaxTests" */;
+			buildPhases = (
+				AF4D8B7F2DE0990300937071 /* Sources */,
+				AF4D8B802DE0990300937071 /* Frameworks */,
+				AF4D8B812DE0990300937071 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				AF4D8B852DE0990300937071 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				AF4D8B862DE0990300937071 /* repomaxTests */,
+			);
+			name = repomaxTests;
+			packageProductDependencies = (
+			);
+			productName = repomaxTests;
+			productReference = AF4D8B832DE0990300937071 /* repomaxTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		AF4D8B8C2DE0990300937071 /* repomaxUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AF4D8B9D2DE0990300937071 /* Build configuration list for PBXNativeTarget "repomaxUITests" */;
+			buildPhases = (
+				AF4D8B892DE0990300937071 /* Sources */,
+				AF4D8B8A2DE0990300937071 /* Frameworks */,
+				AF4D8B8B2DE0990300937071 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				AF4D8B8F2DE0990300937071 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				AF4D8B902DE0990300937071 /* repomaxUITests */,
+			);
+			name = repomaxUITests;
+			packageProductDependencies = (
+			);
+			productName = repomaxUITests;
+			productReference = AF4D8B8D2DE0990300937071 /* repomaxUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		AF4D8B652DE0990200937071 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1610;
+				LastUpgradeCheck = 1610;
+				TargetAttributes = {
+					AF4D8B6C2DE0990200937071 = {
+						CreatedOnToolsVersion = 16.1;
+					};
+					AF4D8B822DE0990300937071 = {
+						CreatedOnToolsVersion = 16.1;
+						TestTargetID = AF4D8B6C2DE0990200937071;
+					};
+					AF4D8B8C2DE0990300937071 = {
+						CreatedOnToolsVersion = 16.1;
+						TestTargetID = AF4D8B6C2DE0990200937071;
+					};
+				};
+			};
+			buildConfigurationList = AF4D8B682DE0990200937071 /* Build configuration list for PBXProject "repomax" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = AF4D8B642DE0990200937071;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = AF4D8B6E2DE0990200937071 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				AF4D8B6C2DE0990200937071 /* repomax */,
+				AF4D8B822DE0990300937071 /* repomaxTests */,
+				AF4D8B8C2DE0990300937071 /* repomaxUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		AF4D8B6B2DE0990200937071 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AF4D8B812DE0990300937071 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AF4D8B8B2DE0990300937071 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		AF4D8B692DE0990200937071 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AF4D8B7F2DE0990300937071 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AF4D8B892DE0990300937071 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		AF4D8B852DE0990300937071 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AF4D8B6C2DE0990200937071 /* repomax */;
+			targetProxy = AF4D8B842DE0990300937071 /* PBXContainerItemProxy */;
+		};
+		AF4D8B8F2DE0990300937071 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AF4D8B6C2DE0990200937071 /* repomax */;
+			targetProxy = AF4D8B8E2DE0990300937071 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		AF4D8B952DE0990300937071 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.1;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		AF4D8B962DE0990300937071 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.1;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		AF4D8B982DE0990300937071 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = repomax/repomax.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"repomax/Preview Content\"";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = fomoroller.repomax;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		AF4D8B992DE0990300937071 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = repomax/repomax.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"repomax/Preview Content\"";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = fomoroller.repomax;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		AF4D8B9B2DE0990300937071 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.1;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = fomoroller.repomaxTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/repomax.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/repomax";
+			};
+			name = Debug;
+		};
+		AF4D8B9C2DE0990300937071 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.1;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = fomoroller.repomaxTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/repomax.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/repomax";
+			};
+			name = Release;
+		};
+		AF4D8B9E2DE0990300937071 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = fomoroller.repomaxUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = repomax;
+			};
+			name = Debug;
+		};
+		AF4D8B9F2DE0990300937071 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = fomoroller.repomaxUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = repomax;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		AF4D8B682DE0990200937071 /* Build configuration list for PBXProject "repomax" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AF4D8B952DE0990300937071 /* Debug */,
+				AF4D8B962DE0990300937071 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AF4D8B972DE0990300937071 /* Build configuration list for PBXNativeTarget "repomax" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AF4D8B982DE0990300937071 /* Debug */,
+				AF4D8B992DE0990300937071 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AF4D8B9A2DE0990300937071 /* Build configuration list for PBXNativeTarget "repomaxTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AF4D8B9B2DE0990300937071 /* Debug */,
+				AF4D8B9C2DE0990300937071 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AF4D8B9D2DE0990300937071 /* Build configuration list for PBXNativeTarget "repomaxUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AF4D8B9E2DE0990300937071 /* Debug */,
+				AF4D8B9F2DE0990300937071 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = AF4D8B652DE0990200937071 /* Project object */;
+}
