@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="repomax/Resources/Assets.xcassets/AppIcon.appiconset/icon_32.png" alt="Repomax App Icon" width="32" height="32" />
+<img src="repomax/Resources/Assets.xcassets/AppIcon.appiconset/icon_128.png" alt="Repomax App Icon" width="128" height="128" />
 
 # Repomax
 
