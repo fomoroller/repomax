@@ -386,16 +386,13 @@ struct FileTreeItemView: View {
                 if item.type == .folder {
                     Button {
                         isItemExpanded.toggle()
-                        if isItemExpanded && !item.childrenLoaded {
-                            appState.loadChildren(for: item.path)
-                        }
                         updateItemInTree(expanded: isItemExpanded)
                     } label: {
                         Image(systemName: isItemExpanded ? "chevron.down" : "chevron.right")
                             .font(.system(size: 11, weight: .medium))
                             .foregroundColor(.secondary)
                             .frame(width: 16, height: 16)
-                            .opacity(item.childrenLoaded && item.children.isEmpty ? 0.3 : 1.0)
+                            .opacity(item.children.isEmpty ? 0.3 : 1.0)
                     }
                     .buttonStyle(.plain)
                 } else {
@@ -462,9 +459,6 @@ struct FileTreeItemView: View {
             .onTapGesture {
                 if item.type == .folder {
                     isItemExpanded.toggle()
-                    if isItemExpanded && !item.childrenLoaded {
-                        appState.loadChildren(for: item.path)
-                    }
                     updateItemInTree(expanded: isItemExpanded)
                 } else {
                     isItemSelected.toggle()
@@ -475,13 +469,8 @@ struct FileTreeItemView: View {
             
             // Children (if expanded)
             if isItemExpanded && item.type == .folder {
-                if item.childrenLoaded {
-                    ForEach(item.children) { child in
-                        FileTreeItemView(item: child, level: level + 1)
-                    }
-                } else {
-                    ProgressView()
-                        .padding(.leading, CGFloat((level + 1) * 16))
+                ForEach(item.children) { child in
+                    FileTreeItemView(item: child, level: level + 1)
                 }
             }
         }
