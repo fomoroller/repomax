@@ -8,7 +8,11 @@ class AppState: ObservableObject {
     @Published var selectedTab: TabType = .compose
     @Published var fileTree: [FileItem] = []
     @Published var selectedFiles: Set<String> = []
-    @Published var searchText: String = ""
+    @Published var searchText: String = "" {
+        didSet {
+            searchCache.removeAll()
+        }
+    }
     @Published var instructionsText: String = ""
     @Published var aiResponseText: String = ""
     @Published var selectedFileContent: String?
@@ -28,6 +32,11 @@ class AppState: ObservableObject {
     var backupContents: [String: String] = [:]
     var pendingChanges: [FileChange] = []
     @Published var customRoles: [CustomRole] = []
+
+    private var tokenCache: [String: Int] = [:]
+    private var searchCache: [String: [FileItem]] = [:]
+    private var gitignoreParser: GitignoreParser? = nil
+    private let fileQueue = DispatchQueue(label: "AppState.fileQueue", qos: .userInitiated)
     
     enum FormatOption: String {
         case none = "None"
@@ -77,7 +86,7 @@ class AppState: ObservableObject {
     func loadSampleFileTree() {
         let rootPath = "/SamplePath/RepoMax"
         fileTree = [
-            FileItem(name: "RepoMax", path: rootPath, type: .folder, isExpanded: true, isSelected: true, children: [
+            FileItem(name: "RepoMax", path: rootPath, type: .folder, isExpanded: true, isSelected: true, childrenLoaded: true, children: [
                 FileItem(name: ".build", path: "\(rootPath)/.build", type: .folder, isSelected: true),
                 FileItem(name: "Assets.xcassets", path: "\(rootPath)/Assets.xcassets", type: .folder, isSelected: true),
                 FileItem(name: "Core", path: "\(rootPath)/Core", type: .folder),
@@ -246,73 +255,71 @@ class AppState: ObservableObject {
     
     func loadWorkspace(at path: String) {
         fileTree.removeAll()
-        
-        // 1. Check for .gitignore
-        let gitignoreURL = URL(fileURLWithPath: path).appendingPathComponent(".gitignore")
-        var gitignoreParser: GitignoreParser? = nil
-        
-        if FileManager.default.fileExists(atPath: gitignoreURL.path) {
-            if let content = try? String(contentsOf: gitignoreURL, encoding: .utf8) {
-                gitignoreParser = GitignoreParser(gitignoreContent: content)
+        tokenCache.removeAll()
+        searchCache.removeAll()
+
+        fileQueue.async { [weak self] in
+            guard let self = self else { return }
+
+            let gitignoreURL = URL(fileURLWithPath: path).appendingPathComponent(".gitignore")
+            var parser: GitignoreParser? = nil
+            if FileManager.default.fileExists(atPath: gitignoreURL.path) {
+                if let content = try? String(contentsOf: gitignoreURL, encoding: .utf8) {
+                    parser = GitignoreParser(gitignoreContent: content)
+                }
+            }
+
+            self.gitignoreParser = parser
+
+            let rootDirName = URL(fileURLWithPath: path).lastPathComponent
+            let children = Self.buildDirectory(at: path, gitignoreParser: parser)
+            let rootItem = FileItem(
+                name: rootDirName,
+                path: path,
+                type: .folder,
+                isExpanded: true,
+                isSelected: false,
+                childrenLoaded: true,
+                children: children
+            )
+
+            DispatchQueue.main.async {
+                self.fileTree = [rootItem]
             }
         }
-        
-        // 2. Build a file list from the directory recursively
-        let rootDirName = URL(fileURLWithPath: path).lastPathComponent
-        let rootItem = FileItem(
-            name: rootDirName,
-            path: path,
-            type: .folder,
-            isExpanded: true,
-            isSelected: false,
-            children: loadDirectory(at: path, withGitignore: gitignoreParser)
-        )
-        
-        fileTree = [rootItem]
     }
     
     private func loadDirectory(at path: String, withGitignore gitignoreParser: GitignoreParser?) -> [FileItem] {
         var items: [FileItem] = []
-        
+
         do {
             let directoryContents = try FileManager.default.contentsOfDirectory(atPath: path)
-            
+
             for name in directoryContents {
-                // Default filter for dot files
-                if name.hasPrefix(".") {
-                    continue
-                }
-                
+                if name.hasPrefix(".") { continue }
+
                 let filePath = (path as NSString).appendingPathComponent(name)
-                
-                // Filter out ignored by gitignore
+
                 if let parser = gitignoreParser, parser.isIgnored(filePath: filePath) {
                     continue
                 }
-                
-                // Check if folder or file
+
                 var isDir: ObjCBool = false
                 FileManager.default.fileExists(atPath: filePath, isDirectory: &isDir)
-                
-                // For directories, recursively load children
-                var children: [FileItem] = []
-                if isDir.boolValue {
-                    children = loadDirectory(at: filePath, withGitignore: gitignoreParser)
-                }
-                
+
                 let item = FileItem(
                     name: name,
                     path: filePath,
                     type: isDir.boolValue ? .folder : .file,
                     isExpanded: false,
                     isSelected: false,
-                    children: children
+                    childrenLoaded: false,
+                    children: []
                 )
-                
+
                 items.append(item)
             }
             
-            // Sort folders first, then by name
             items.sort { (item1, item2) -> Bool in
                 if item1.type == item2.type {
                     return item1.name < item2.name
@@ -327,11 +334,78 @@ class AppState: ObservableObject {
         
         return items
     }
+
+    private static func buildDirectory(at path: String, gitignoreParser: GitignoreParser?) -> [FileItem] {
+        var items: [FileItem] = []
+        do {
+            let directoryContents = try FileManager.default.contentsOfDirectory(atPath: path)
+            for name in directoryContents {
+                if name.hasPrefix(".") { continue }
+                let filePath = (path as NSString).appendingPathComponent(name)
+                if let parser = gitignoreParser, parser.isIgnored(filePath: filePath) {
+                    continue
+                }
+                var isDir: ObjCBool = false
+                FileManager.default.fileExists(atPath: filePath, isDirectory: &isDir)
+                let item = FileItem(
+                    name: name,
+                    path: filePath,
+                    type: isDir.boolValue ? .folder : .file,
+                    isExpanded: false,
+                    isSelected: false,
+                    childrenLoaded: false,
+                    children: []
+                )
+                items.append(item)
+            }
+            items.sort { (a, b) -> Bool in
+                if a.type == b.type { return a.name < b.name } else { return a.type == .folder }
+            }
+        } catch {
+            print("Error reading directory \(path): \(error)")
+        }
+        return items
+    }
     
     func clearLoadedFiles() {
         fileTree.removeAll()
         selectedFiles.removeAll()
         // Keep recentWorkspaces intact
+    }
+
+    func loadChildren(for path: String) {
+        guard let parser = gitignoreParser else { return }
+        fileQueue.async { [weak self] in
+            guard let self = self else { return }
+            let children = Self.buildDirectory(at: path, gitignoreParser: parser)
+            DispatchQueue.main.async {
+                self.updateFileTreeChildren(path: path, children: children)
+            }
+        }
+    }
+
+    private func updateFileTreeChildren(path: String, children: [FileItem]) {
+        func update(in items: inout [FileItem]) -> Bool {
+            for index in items.indices {
+                if items[index].path == path {
+                    items[index].children = children
+                    items[index].childrenLoaded = true
+                    return true
+                }
+                if !items[index].children.isEmpty {
+                    var ch = items[index].children
+                    if update(in: &ch) {
+                        items[index].children = ch
+                        return true
+                    }
+                }
+            }
+            return false
+        }
+        var tree = fileTree
+        if update(in: &tree) {
+            fileTree = tree
+        }
     }
     
     func applyVirtualGitignore(_ patterns: String) {
@@ -387,9 +461,13 @@ class AppState: ObservableObject {
     }
     
     func calculateTokenCount(_ filePath: String) -> Int {
-        // Example approximation
+        if let cached = tokenCache[filePath] {
+            return cached
+        }
         guard let content = try? String(contentsOfFile: filePath, encoding: .utf8) else { return 0 }
-        return content.count / 4
+        let count = content.count / 4
+        tokenCache[filePath] = count
+        return count
     }
     
     // Architect prompt template
@@ -903,6 +981,10 @@ class AppState: ObservableObject {
         if searchText.isEmpty {
             return fileTree
         }
+
+        if let cached = searchCache[searchText] {
+            return cached
+        }
         
         // Helper function to filter items and their children
         func filterItems(_ items: [FileItem]) -> [FileItem] {
@@ -932,7 +1014,9 @@ class AppState: ObservableObject {
             return filteredItems
         }
         
-        return filterItems(fileTree)
+        let result = filterItems(fileTree)
+        searchCache[searchText] = result
+        return result
     }
 }
 
@@ -943,6 +1027,7 @@ struct FileItem: Identifiable, Hashable {
     var type: FileType
     var isExpanded: Bool = false
     var isSelected: Bool = false
+    var childrenLoaded: Bool = false
     var children: [FileItem] = []
     
     enum FileType {
