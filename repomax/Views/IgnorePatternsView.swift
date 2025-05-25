@@ -6,8 +6,23 @@ struct IgnorePatternsView: View {
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var appState: AppState
     @State private var selectedScope = "Local Folder"
-    @State private var selectedFolder = "RepoMax"
     @State private var ignorePatterns: String
+    
+    // Computed property for the selected folder name
+    private var selectedFolderName: String {
+        if let workspacePath = appState.currentWorkspacePath {
+            return URL(fileURLWithPath: workspacePath).lastPathComponent
+        }
+        return "No Folder Selected"
+    }
+    
+    // Computed property for the full .repo_ignore path
+    private var repoIgnorePath: String {
+        if let workspacePath = appState.currentWorkspacePath {
+            return "\(workspacePath)/.repo_ignore"
+        }
+        return "No workspace selected"
+    }
     
     init() {
         // Initialize with the current virtual gitignore or default patterns
@@ -51,6 +66,8 @@ struct IgnorePatternsView: View {
                 HStack(spacing: 0) {
                     Button("Local Folder") {
                         selectedScope = "Local Folder"
+                        // Load local .repo_ignore if it exists
+                        loadLocalIgnorePatterns()
                     }
                     .padding(.vertical, 8)
                     .frame(maxWidth: .infinity)
@@ -59,6 +76,8 @@ struct IgnorePatternsView: View {
                     
                     Button("Global Default") {
                         selectedScope = "Global Default"
+                        // Load global patterns
+                        loadGlobalIgnorePatterns()
                     }
                     .padding(.vertical, 8)
                     .frame(maxWidth: .infinity)
@@ -66,7 +85,9 @@ struct IgnorePatternsView: View {
                     .cornerRadius(8)
                 }
                 
-                Text("Local scope will create a .repo_ignore file upon save and will be combined with global defaults.")
+                Text(selectedScope == "Local Folder" ? 
+                     "Local scope will create a .repo_ignore file upon save and will be combined with global defaults." :
+                     "Global defaults apply to all projects unless overridden by local .repo_ignore files.")
                     .font(.caption)
                     .foregroundColor(.gray)
             }
@@ -76,7 +97,7 @@ struct IgnorePatternsView: View {
                     .font(.headline)
                 
                 HStack {
-                    Text(selectedFolder)
+                    Text(selectedFolderName)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 8)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -91,9 +112,29 @@ struct IgnorePatternsView: View {
                         .stroke(Color.gray.opacity(0.3), lineWidth: 1)
                 )
                 
-                Text("/Users/hannan/Documents/Code/repomax/RepoMax/.repo_ignore")
+                Text(repoIgnorePath)
                     .font(.caption)
                     .foregroundColor(.gray)
+                
+                // Show current source of patterns
+                if selectedScope == "Local Folder", let workspacePath = appState.currentWorkspacePath {
+                    let repoIgnoreExists = FileManager.default.fileExists(atPath: "\(workspacePath)/.repo_ignore")
+                    let gitignoreExists = FileManager.default.fileExists(atPath: "\(workspacePath)/.gitignore")
+                    
+                    if repoIgnoreExists {
+                        Text("📄 Loaded from existing .repo_ignore")
+                            .font(.caption)
+                            .foregroundColor(.blue)
+                    } else if gitignoreExists {
+                        Text("📄 Loaded from .gitignore (will save to .repo_ignore)")
+                            .font(.caption)
+                            .foregroundColor(.orange)
+                    } else {
+                        Text("📄 No ignore file found (will create .repo_ignore)")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
             }
             
             TextEditor(text: $ignorePatterns)
@@ -117,18 +158,122 @@ struct IgnorePatternsView: View {
                 Spacer()
                 
                 Button("Save") {
-                    // Save the ignore patterns
-                    appState.applyVirtualGitignore(ignorePatterns)
-                    
-                    // Store in UserDefaults for persistence
-                    UserDefaults.standard.set(ignorePatterns, forKey: "virtualGitignore")
-                    
-                    presentationMode.wrappedValue.dismiss()
+                    saveIgnorePatterns()
                 }
                 .buttonStyle(.borderedProminent)
+                .disabled(appState.currentWorkspacePath == nil && selectedScope == "Local Folder")
             }
         }
         .padding()
         .frame(width: 600, height: 600)
+        .onAppear {
+            // Set default scope based on whether we have a workspace
+            if appState.currentWorkspacePath != nil {
+                selectedScope = "Local Folder"
+                loadLocalIgnorePatterns()
+            } else {
+                selectedScope = "Global Default"
+                loadGlobalIgnorePatterns()
+            }
+        }
+        .onChange(of: appState.currentWorkspacePath) { workspacePath in
+            // Reload patterns when workspace path changes
+            if workspacePath != nil && selectedScope == "Local Folder" {
+                loadLocalIgnorePatterns()
+            }
+        }
+    }
+    
+    private func loadLocalIgnorePatterns() {
+        guard let workspacePath = appState.currentWorkspacePath else { 
+            return 
+        }
+        
+        let repoIgnoreURL = URL(fileURLWithPath: workspacePath).appendingPathComponent(".repo_ignore")
+        let gitignoreURL = URL(fileURLWithPath: workspacePath).appendingPathComponent(".gitignore")
+        
+        // Check file existence explicitly
+        let repoIgnoreExists = FileManager.default.fileExists(atPath: repoIgnoreURL.path)
+        let gitignoreExists = FileManager.default.fileExists(atPath: gitignoreURL.path)
+        
+        if repoIgnoreExists {
+            do {
+                let content = try String(contentsOf: repoIgnoreURL, encoding: .utf8)
+                ignorePatterns = content
+                return
+            } catch {
+                print("Error reading .repo_ignore: \(error)")
+            }
+        }
+        
+        if gitignoreExists {
+            do {
+                let content = try String(contentsOf: gitignoreURL, encoding: .utf8)
+                ignorePatterns = content
+                return
+            } catch {
+                print("Error reading .gitignore: \(error)")
+            }
+        }
+        
+        // Start with empty patterns for local scope if neither file exists
+        ignorePatterns = ""
+    }
+    
+    private func loadGlobalIgnorePatterns() {
+        let defaultPatterns = """
+        # Global ignore defaults
+        **/node_modules/
+        **/.npm/
+        **/__pycache__/
+        **/.pytest_cache/
+        **/.mypy_cache/
+
+        # Build caches
+        **/.gradle/
+        **/.nuget/
+        **/.cargo/
+        **/.stack-work/
+        **/.ccache/
+
+        # IDE and Editor caches
+        **/.idea/
+        **/.vscode/
+        **/*.swp
+        """
+        
+        ignorePatterns = UserDefaults.standard.string(forKey: "virtualGitignore") ?? defaultPatterns
+    }
+    
+    private func saveIgnorePatterns() {
+        if selectedScope == "Local Folder" {
+            // Save to .repo_ignore file in the workspace
+            guard let workspacePath = appState.currentWorkspacePath else { 
+                return 
+            }
+            
+            let repoIgnoreURL = URL(fileURLWithPath: workspacePath).appendingPathComponent(".repo_ignore")
+            
+            do {
+                try ignorePatterns.write(to: repoIgnoreURL, atomically: true, encoding: .utf8)
+                
+                // Apply the patterns to update the file tree immediately
+                appState.applyVirtualGitignore(ignorePatterns)
+            } catch let error as NSError {
+                print("Error saving .repo_ignore file: \(error)")
+                if error.domain == NSCocoaErrorDomain && error.code == 513 {
+                    print("Permission denied - app may need elevated permissions or folder may be protected")
+                    // TODO: Show user alert about permission issue
+                }
+            }
+        } else {
+            // Save to global defaults
+            UserDefaults.standard.set(ignorePatterns, forKey: "virtualGitignore")
+            
+            // Apply the global patterns
+            appState.applyVirtualGitignore(ignorePatterns)
+        }
+        
+        presentationMode.wrappedValue.dismiss()
     }
 }

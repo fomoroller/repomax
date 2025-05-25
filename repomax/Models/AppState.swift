@@ -246,18 +246,13 @@ class AppState: ObservableObject {
     
     func loadWorkspace(at path: String) {
         fileTree.removeAll()
+        currentWorkspacePath = path
         
-        // 1. Check for .gitignore
-        let gitignoreURL = URL(fileURLWithPath: path).appendingPathComponent(".gitignore")
-        var gitignoreParser: GitignoreParser? = nil
+        // Store the workspace path and create a combined gitignore parser
+        let combinedIgnoreContent = buildCombinedIgnorePatterns(workspacePath: path)
+        let gitignoreParser = GitignoreParser(gitignoreContent: combinedIgnoreContent)
         
-        if FileManager.default.fileExists(atPath: gitignoreURL.path) {
-            if let content = try? String(contentsOf: gitignoreURL, encoding: .utf8) {
-                gitignoreParser = GitignoreParser(gitignoreContent: content)
-            }
-        }
-        
-        // 2. Build a file list from the directory recursively
+        // Build a file list from the directory recursively
         let rootDirName = URL(fileURLWithPath: path).lastPathComponent
         let rootItem = FileItem(
             name: rootDirName,
@@ -265,28 +260,63 @@ class AppState: ObservableObject {
             type: .folder,
             isExpanded: true,
             isSelected: false,
-            children: loadDirectory(at: path, withGitignore: gitignoreParser)
+            children: loadDirectory(at: path, withGitignore: gitignoreParser, basePath: path)
         )
         
         fileTree = [rootItem]
+        
+        // Note: Removed auto-show of ignore patterns modal
+        // Users can manually open it via the hamburger menu when needed
     }
     
-    private func loadDirectory(at path: String, withGitignore gitignoreParser: GitignoreParser?) -> [FileItem] {
+    private func buildCombinedIgnorePatterns(workspacePath: String) -> String {
+        var combinedPatterns: [String] = []
+        
+        // 1. Start with global virtual gitignore patterns
+        let globalPatterns = virtualGitignore.isEmpty ? 
+            (UserDefaults.standard.string(forKey: "virtualGitignore") ?? "") : 
+            virtualGitignore
+            
+        if !globalPatterns.isEmpty {
+            combinedPatterns.append("# Global virtual gitignore patterns")
+            combinedPatterns.append(globalPatterns)
+        }
+        
+        // 2. Add standard .gitignore if it exists
+        let gitignoreURL = URL(fileURLWithPath: workspacePath).appendingPathComponent(".gitignore")
+        if FileManager.default.fileExists(atPath: gitignoreURL.path),
+           let gitignoreContent = try? String(contentsOf: gitignoreURL, encoding: .utf8) {
+            combinedPatterns.append("# Standard .gitignore patterns")
+            combinedPatterns.append(gitignoreContent)
+        }
+        
+        // 3. Add local .repo_ignore if it exists (takes precedence)
+        let repoIgnoreURL = URL(fileURLWithPath: workspacePath).appendingPathComponent(".repo_ignore")
+        if FileManager.default.fileExists(atPath: repoIgnoreURL.path),
+           let repoIgnoreContent = try? String(contentsOf: repoIgnoreURL, encoding: .utf8) {
+            combinedPatterns.append("# Local .repo_ignore patterns (override global)")
+            combinedPatterns.append(repoIgnoreContent)
+        }
+        
+        return combinedPatterns.joined(separator: "\n\n")
+    }
+
+    private func loadDirectory(at path: String, withGitignore gitignoreParser: GitignoreParser, basePath: String) -> [FileItem] {
         var items: [FileItem] = []
         
         do {
             let directoryContents = try FileManager.default.contentsOfDirectory(atPath: path)
             
             for name in directoryContents {
-                // Default filter for dot files
-                if name.hasPrefix(".") {
+                // Default filter for dot files (except .repo_ignore which we want to show)
+                if name.hasPrefix(".") && name != ".repo_ignore" {
                     continue
                 }
                 
                 let filePath = (path as NSString).appendingPathComponent(name)
                 
-                // Filter out ignored by gitignore
-                if let parser = gitignoreParser, parser.isIgnored(filePath: filePath) {
+                // Filter out ignored files using improved parser
+                if gitignoreParser.isIgnored(filePath: filePath, relativeTo: basePath) {
                     continue
                 }
                 
@@ -297,7 +327,7 @@ class AppState: ObservableObject {
                 // For directories, recursively load children
                 var children: [FileItem] = []
                 if isDir.boolValue {
-                    children = loadDirectory(at: filePath, withGitignore: gitignoreParser)
+                    children = loadDirectory(at: filePath, withGitignore: gitignoreParser, basePath: basePath)
                 }
                 
                 let item = FileItem(
