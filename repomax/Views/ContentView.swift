@@ -324,35 +324,42 @@ struct FileTreeItemView: View {
     let item: FileItem
     let level: Int
     @EnvironmentObject var appState: AppState
-    @State private var isItemExpanded: Bool
-    @State private var isItemSelected: Bool
     @State private var isHovering: Bool = false
     
     init(item: FileItem, level: Int) {
         self.item = item
         self.level = level
-        _isItemExpanded = State(initialValue: item.isExpanded)
-        _isItemSelected = State(initialValue: item.isSelected)
+    }
+    
+    // Helper to locate the up-to-date item in the fileTree by its ID
+    private func findItem(in items: [FileItem], id: UUID) -> FileItem? {
+        for file in items {
+            if file.id == id { return file }
+            if let found = findItem(in: file.children, id: id) {
+                return found
+            }
+        }
+        return nil
+    }
+    
+    private var currentItem: FileItem? {
+        findItem(in: appState.fileTree, id: item.id)
     }
     
     // Helper to find the item in the file tree hierarchy
-    private func updateItemInTree(expanded: Bool? = nil, selected: Bool? = nil) {
+    private func updateItemInTree(expanded: Bool? = nil) {
         // Function to recursively update an item in the tree
-        func updateItem(in items: inout [FileItem], id: UUID, expanded: Bool?, selected: Bool?) -> Bool {
+        func updateItem(in items: inout [FileItem], id: UUID, expanded: Bool?) -> Bool {
             for index in items.indices {
                 if items[index].id == id {
                     if let expanded = expanded {
                         items[index].isExpanded = expanded
                     }
-                    if let selected = selected {
-                        items[index].isSelected = selected
-                    }
                     return true
                 }
-                
                 if !items[index].children.isEmpty {
                     var children = items[index].children
-                    if updateItem(in: &children, id: id, expanded: expanded, selected: selected) {
+                    if updateItem(in: &children, id: id, expanded: expanded) {
                         items[index].children = children
                         return true
                     }
@@ -363,9 +370,7 @@ struct FileTreeItemView: View {
         
         // Update the main file tree
         var tree = appState.fileTree
-        if updateItem(in: &tree, id: item.id, expanded: expanded, selected: selected) {
-            // This is a workaround to trigger UI update, as directly modifying fileTree may not always work
-            // In a real app, you'd use a better state management approach
+        if updateItem(in: &tree, id: item.id, expanded: expanded) {
             DispatchQueue.main.async {
                 appState.fileTree = tree
             }
@@ -384,39 +389,26 @@ struct FileTreeItemView: View {
                 
                 // Expansion indicator for folders
                 if item.type == .folder {
+                    let isExpanded = currentItem?.isExpanded ?? false
                     Button {
-                        isItemExpanded.toggle()
-                        updateItemInTree(expanded: isItemExpanded)
+                        appState.loadChildrenIfNeeded(for: item)
+                        updateItemInTree(expanded: !isExpanded)
                     } label: {
-                        Image(systemName: isItemExpanded ? "chevron.down" : "chevron.right")
+                        Image(systemName: isExpanded ? "chevron.down" : "chevron.right")
                             .font(.system(size: 11, weight: .medium))
                             .foregroundColor(.secondary)
                             .frame(width: 16, height: 16)
-                            .opacity(item.children.isEmpty ? 0.3 : 1.0)
+                            .opacity((currentItem?.children.isEmpty ?? true) ? 0.3 : 1.0)
                     }
                     .buttonStyle(.plain)
                 } else {
-                    Spacer()
-                        .frame(width: 16)
+                    Spacer().frame(width: 16)
                 }
                 
                 // Checkbox
-                CheckboxView(isChecked: isItemSelected || (item.type == .folder && appState.isPathSelected(item.path))) {
-                    // Toggle selection on checkbox click
-                    isItemSelected.toggle()
-                    updateItemInTree(selected: isItemSelected)
-                    
-                    // Update the selected files set
+                let isChecked = appState.isPathSelected(item.path)
+                CheckboxView(isChecked: isChecked) {
                     appState.toggleFileSelection(path: item.path)
-                    
-                    // Update local state to match global state
-                    DispatchQueue.main.async {
-                        if item.type == .folder {
-                            isItemSelected = appState.isPathSelected(item.path)
-                        } else {
-                            isItemSelected = appState.selectedFiles.contains(item.path)
-                        }
-                    }
                 }
                 .frame(width: 18, height: 18)
                 
@@ -439,7 +431,7 @@ struct FileTreeItemView: View {
             .contentShape(Rectangle())
             .background(
                 Group {
-                    if isItemSelected || (item.type == .folder && appState.isPathSelected(item.path)) {
+                    if appState.isPathSelected(item.path) {
                         VisualEffectView(material: .selection, blendingMode: .withinWindow)
                             .clipShape(RoundedRectangle(cornerRadius: 6))
                     } else if isHovering {
@@ -458,18 +450,17 @@ struct FileTreeItemView: View {
             }
             .onTapGesture {
                 if item.type == .folder {
-                    isItemExpanded.toggle()
-                    updateItemInTree(expanded: isItemExpanded)
+                    let isExpanded = currentItem?.isExpanded ?? false
+                    appState.loadChildrenIfNeeded(for: item)
+                    updateItemInTree(expanded: !isExpanded)
                 } else {
-                    isItemSelected.toggle()
-                    updateItemInTree(selected: isItemSelected)
                     appState.toggleFileSelection(path: item.path)
                 }
             }
             
             // Children (if expanded)
-            if isItemExpanded && item.type == .folder {
-                ForEach(item.children) { child in
+            if currentItem?.isExpanded == true && item.type == .folder {
+                ForEach(currentItem?.children ?? []) { child in
                     FileTreeItemView(item: child, level: level + 1)
                 }
             }

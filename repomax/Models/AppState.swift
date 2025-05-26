@@ -28,6 +28,8 @@ class AppState: ObservableObject {
     var backupContents: [String: String] = [:]
     var pendingChanges: [FileChange] = []
     @Published var customRoles: [CustomRole] = []
+    private var gitignoreParser: GitignoreParser?
+    private var workspaceBasePath: String?
     
     enum FormatOption: String {
         case none = "None"
@@ -139,21 +141,25 @@ class AppState: ObservableObject {
     
     // Recursively add all files in a folder
     private func addFilesInFolder(_ folderPath: String) {
+        // Skip if ignored
+        if let parser = gitignoreParser, let base = workspaceBasePath, parser.isIgnored(filePath: folderPath, relativeTo: base) {
+            return
+        }
         // Add the folder itself to selection
         selectedFiles.insert(folderPath)
-        
         do {
             let contents = try FileManager.default.contentsOfDirectory(atPath: folderPath)
             for item in contents {
                 let itemPath = (folderPath as NSString).appendingPathComponent(item)
-                
+                // Skip ignored items
+                if let parser = gitignoreParser, let base = workspaceBasePath, parser.isIgnored(filePath: itemPath, relativeTo: base) {
+                    continue
+                }
                 var isDir: ObjCBool = false
                 if FileManager.default.fileExists(atPath: itemPath, isDirectory: &isDir) {
                     if isDir.boolValue {
-                        // Recursively add files in subfolder
                         addFilesInFolder(itemPath)
                     } else {
-                        // Add file to selection
                         selectedFiles.insert(itemPath)
                     }
                 }
@@ -246,27 +252,31 @@ class AppState: ObservableObject {
     
     func loadWorkspace(at path: String) {
         fileTree.removeAll()
+        selectedFiles.removeAll()
         currentWorkspacePath = path
-        
-        // Store the workspace path and create a combined gitignore parser
+        workspaceBasePath = path
+        // Build and store gitignore parser
         let combinedIgnoreContent = buildCombinedIgnorePatterns(workspacePath: path)
-        let gitignoreParser = GitignoreParser(gitignoreContent: combinedIgnoreContent)
-        
-        // Build a file list from the directory recursively
+        let parser = GitignoreParser(gitignoreContent: combinedIgnoreContent)
+        gitignoreParser = parser
+        // Initialize root item without children
         let rootDirName = URL(fileURLWithPath: path).lastPathComponent
         let rootItem = FileItem(
             name: rootDirName,
             path: path,
             type: .folder,
             isExpanded: true,
-            isSelected: false,
-            children: loadDirectory(at: path, withGitignore: gitignoreParser, basePath: path)
+            isSelected: isPathSelected(path),
+            children: []
         )
-        
         fileTree = [rootItem]
-        
-        // Note: Removed auto-show of ignore patterns modal
-        // Users can manually open it via the hamburger menu when needed
+        // Load children off the main thread
+        DispatchQueue.global(qos: .userInitiated).async {
+            let children = self.loadDirectory(at: path, withGitignore: parser, basePath: path)
+            DispatchQueue.main.async {
+                self.updateChildrenInTree(id: rootItem.id, children: children)
+            }
+        }
     }
     
     private func buildCombinedIgnorePatterns(workspacePath: String) -> String {
@@ -963,6 +973,38 @@ class AppState: ObservableObject {
         }
         
         return filterItems(fileTree)
+    }
+    
+    // Add lazy-loading and updateChildrenInTree helpers
+    func loadChildrenIfNeeded(for item: FileItem) {
+        guard item.type == .folder, item.children.isEmpty, let base = workspaceBasePath, let parser = gitignoreParser else { return }
+        DispatchQueue.global(qos: .userInitiated).async {
+            let children = self.loadDirectory(at: item.path, withGitignore: parser, basePath: base)
+            DispatchQueue.main.async {
+                self.updateChildrenInTree(id: item.id, children: children)
+            }
+        }
+    }
+
+    private func updateChildrenInTree(id: UUID, children: [FileItem]) {
+        func update(in items: inout [FileItem]) -> Bool {
+            for index in items.indices {
+                if items[index].id == id {
+                    items[index].children = children
+                    return true
+                }
+                if !items[index].children.isEmpty {
+                    if update(in: &items[index].children) {
+                        return true
+                    }
+                }
+            }
+            return false
+        }
+        var tree = fileTree
+        if update(in: &tree) {
+            fileTree = tree
+        }
     }
 }
 
