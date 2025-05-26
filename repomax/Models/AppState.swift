@@ -957,15 +957,18 @@ class AppState: ObservableObject {
                 
                 // Include the item if its name matches or if it has matching children
                 if nameMatches || !filteredChildren.isEmpty {
-                    var newItem = item
-                    newItem.children = filteredChildren
+                    // Create a copy that preserves the original ID
+                    let filteredItem = FileItem(
+                        id: item.id,
+                        name: item.name,
+                        path: item.path,
+                        type: item.type,
+                        isExpanded: !filteredChildren.isEmpty && item.type == .folder ? true : item.isExpanded,
+                        isSelected: item.isSelected,
+                        children: filteredChildren
+                    )
                     
-                    // If there are matches in children, expand the folder to show them
-                    if !filteredChildren.isEmpty && item.type == .folder {
-                        newItem.isExpanded = true
-                    }
-                    
-                    filteredItems.append(newItem)
+                    filteredItems.append(filteredItem)
                 }
             }
             
@@ -1016,6 +1019,19 @@ struct FileItem: Identifiable, Hashable {
     var isExpanded: Bool = false
     var isSelected: Bool = false
     var children: [FileItem] = []
+    
+    // Custom initializer that preserves ID
+    init(id: UUID? = nil, name: String, path: String, type: FileType, isExpanded: Bool = false, isSelected: Bool = false, children: [FileItem] = []) {
+        if let id = id {
+            self.id = id
+        }
+        self.name = name
+        self.path = path
+        self.type = type
+        self.isExpanded = isExpanded
+        self.isSelected = isSelected
+        self.children = children
+    }
     
     enum FileType {
         case file, folder

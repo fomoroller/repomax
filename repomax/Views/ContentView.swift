@@ -343,7 +343,9 @@ struct FileTreeItemView: View {
     }
     
     private var currentItem: FileItem? {
-        findItem(in: appState.fileTree, id: item.id)
+        // When searching, look in filtered tree; otherwise use main tree
+        let searchTree = appState.searchText.isEmpty ? appState.fileTree : appState.filteredFileTree()
+        return findItem(in: searchTree, id: item.id)
     }
     
     // Helper to find the item in the file tree hierarchy
@@ -368,7 +370,7 @@ struct FileTreeItemView: View {
             return false
         }
         
-        // Update the main file tree
+        // Update the main file tree (always update the source tree, not filtered)
         var tree = appState.fileTree
         if updateItem(in: &tree, id: item.id, expanded: expanded) {
             DispatchQueue.main.async {
